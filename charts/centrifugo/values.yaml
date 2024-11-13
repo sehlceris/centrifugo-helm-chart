@@ -14,13 +14,13 @@ image:
   repository: centrifugo/centrifugo
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: ''
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-namespaceOverride: ""
-priorityClassName: ""
+nameOverride: ''
+fullnameOverride: ''
+namespaceOverride: ''
+priorityClassName: ''
 # Annotations to be added to the deployment
 annotations: {}
 
@@ -34,7 +34,7 @@ service:
   ## Specify the nodePort value for the LoadBalancer and NodePort service types.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
-  nodePort: ""
+  nodePort: ''
   ## Provide any additional annotations which may be required
   ##
   annotations: {}
@@ -43,7 +43,7 @@ service:
   labels: {}
   ##
   ## Specify custom appProtocol for a service port.
-  appProtocol: ""
+  appProtocol: ''
   ##
   ## Use separate service for internal endpoints. It could be useful for configuring same port number for all services.
   useSeparateInternalService: false
@@ -56,56 +56,62 @@ internalService:
   port: 9000
   type: ClusterIP
   probeScheme: HTTP
-  nodePort: ""
+  nodePort: ''
   # Static NodePort, if set.
   # nodePort: 30101
-  annotations: {}
+  annotations:
+    {}
     # prometheus.io/scrape: "true"
     # prometheus.io/path: "/metrics"
     # prometheus.io/port: "9000"
   ## Specify custom appProtocol for a service port.
   labels: {}
-  appProtocol: ""
+  appProtocol: ''
 
 grpcService:
   port: 10000
   type: ClusterIP
-  nodePort: ""
+  nodePort: ''
   # Static NodePort, if set.
   # nodePort: 30102
   annotations: {}
   ## Specify custom appProtocol for a service port.
   labels: {}
-  appProtocol: ""
+  appProtocol: ''
 
 uniGrpcService:
   port: 11000
   type: ClusterIP
-  nodePort: ""
+  nodePort: ''
   # Static NodePort, if set.
   # nodePort: 30103
   annotations: {}
   ## Specify custom appProtocol for a service port.
   labels: {}
-  appProtocol: ""
+  appProtocol: ''
 
 ingress:
-  enabled: false
+  enabled: true
 
   # Optionally set the ingressClassName. k8s >= 1.18
-  ingressClassName: ""
+  ingressClassName: 'traefik'
 
   # pathType override - see: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
   pathType: Prefix
-  labels: {}
+  labels:
+    {}
     # extrenal-dns: true
-  annotations: {}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: centrifugo.testdomain.com
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     #
     # To run on custom path:
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
-  hosts: []
+  hosts:
+    - host: centrifugo.testdomain.com
+      paths:
+        - /
     # - host: centrifugo.local
     #   paths:
     #     - /
@@ -113,7 +119,10 @@ ingress:
     #   paths:
     #     - /test(/|$)(.*)
   # https://kubernetes.github.io/ingress-nginx/examples/tls-termination/
-  tls: []
+  tls:
+    - hosts:
+        - centrifugo.testdomain.com
+      secretName: centrifugo-tls
     # - secretName: centrifugo-example-tls
     #   hosts:
     #     - centrifugo.local
@@ -127,22 +136,27 @@ ingressInternal:
   # rules, probably per specific path. Probably `admin_external` or `api_external`
   # options which expose corresponding handlers on the external ingress will work better
   # for you.
-  enabled: false
+  enabled: true
 
   # Optionally set the ingressClassName. k8s >= 1.18
-  ingressClassName: ""
+  ingressClassName: 'traefik'
 
   # pathType override - see: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
   pathType: Prefix
-  labels: {}
+  labels:
+    {}
     # extrenal-dns: true
-  annotations: {}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: centrifugo-admin.testdomain.com
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     #
     # To run on custom path:
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
-  hosts: []
+  hosts:
+    - host: centrifugo-admin.testdomain.com
+      paths:
+        - /
     # - host: centrifugo.local
     #   paths:
     #     - /
@@ -150,7 +164,10 @@ ingressInternal:
     #   paths:
     #     - /test(/|$)(.*)
   # https://kubernetes.github.io/ingress-nginx/examples/tls-termination/
-  tls: []
+  tls:
+    - hosts:
+        - centrifugo-admin.testdomain.com
+      secretName: centrifugo-admin-tls
     # - secretName: centrifugo-example-tls
     #   hosts:
     #     - centrifugo.local
@@ -164,7 +181,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template.
-  name: ""
+  name: ''
 
 autoscaling:
   enabled: false
@@ -179,7 +196,8 @@ autoscaling:
   # ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#default-behavior
   behavior: {}
 
-autoscalingTemplate: []
+autoscalingTemplate:
+  []
   # Custom or additional autoscaling metrics
   # ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis
   # ref: https://github.com/kubernetes-sigs/prometheus-adapter/
@@ -201,10 +219,12 @@ terminationGracePeriodSeconds: 30
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -217,7 +237,8 @@ securityContext: {}
   #   - name: net.core.somaxconn
   #     value: "2048"
 
-deploymentStrategy: {}
+deploymentStrategy:
+  {}
   # type: RollingUpdate
   # rollingUpdate:
   #   maxSurge: 0
@@ -256,7 +277,7 @@ tolerations: []
 affinity: {}
 
 ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
-dnsPolicy: ""
+dnsPolicy: ''
 dnsConfig: {}
 
 # Additional environment variables to be passed to Centrifugo container.
@@ -270,65 +291,43 @@ config:
   # Engine to use. Default memory engine allows running only one Centrifugo pod.
   # Scale to many pods with Redis engine or Nats broker. Refer to Centrifugo
   # documentation: https://centrifugal.github.io/centrifugo/server/engines/
-  engine: "memory"
+  engine: 'memory'
 
   # Enable admin web interface by default.
   admin: true
 
+  # enable all subscribers to publish to the channel they are subscribed to
+  allow_publish_for_subscriber: true
+
   # Array of namespaces.
-  namespaces: []
+  namespaces:
+    - name: "test"
+      allow_publish_for_subscriber: true
 
 # Additional volumes for Centrifugo deployment.
-volumes: []
+volumes:
+  []
   # - name: volume
   #   secret:
   #     secretName: volumeSecretName
 
 # Additional volume mounts for Centrifugo container.
-volumeMounts: []
+volumeMounts:
+  []
   # - name: volume
   #   mountPath: "/volume"
   #   readOnly: true
 
-
 # TopologySpreadConstrains, e.g. for spreading pods across nodes
 # see https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
-topologySpreadConstraints: ""
+topologySpreadConstraints: ''
 
 # Init Containers, e.g. for waiting for other resources like redis  (evaluated as template)
 # see https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-initContainers: ""
+initContainers: ''
 
 # existingSecret: my-secret
 
-# Centrifugo secrets.
-secrets:
-  # Secret key for HMAC tokens.
-  tokenHmacSecretKey: ""
-
-  # Admin password used to protect access to web interface.
-  adminPassword: ""
-
-  # Admin secret used to create auth tokens on user login into admin web interface.
-  adminSecret: ""
-
-  # Centrifugo api_key for Centrifugo API endpoint authorization.
-  apiKey: ""
-
-  # Centrifugo grpc_api_key for Centrifugo GRPC API authorization.
-  grpcApiKey: ""
-
-  # Connection string to Redis.
-  redisAddress: ""
-
-  # Password for Redis.
-  redisPassword: ""
-
-  # Password for Redis Sentinel.
-  redisSentinelPassword: ""
-
-  # Connection string to Nats.
-  natsUrl: ""
-
-  # Centrifugo PRO license.
-  license: ""
+certManager:
+  issuerName: letsencrypt-acme-issuer
+  issuerKind: ClusterIssuer

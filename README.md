@@ -1,3 +1,18 @@
+# aquariusconnect centrifugo helm chart
+
+```shell
+cd charts/centrifugo
+
+kubectl create namespace centrifugo
+
+helm upgrade --install \
+centrifugo \
+. \
+-f values.yaml \
+-f secret-values.yaml \
+--namespace centrifugo
+```
+
 # Centrifugal Kubernetes Helm Charts
 
 ![Release Charts](https://github.com/centrifugal/helm-charts/workflows/Release%20Charts/badge.svg?branch=master)

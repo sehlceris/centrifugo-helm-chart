@@ -1,3 +1,19 @@
+# aquariusconnect centrifugo helm chart
+
+```shell
+cd charts/centrifugo
+
+kubectl create namespace centrifugo
+helm upgrade --install \
+centrifugo \
+. \
+-f values.yaml \
+-f secret-values.yaml \
+--namespace centrifugo
+```
+
+----------
+
 # Centrifugo
 
 This chart bootstraps a [Centrifugo](https://centrifugal.github.io/centrifugo/) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
